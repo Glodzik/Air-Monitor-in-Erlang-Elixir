@@ -1,4 +1,0 @@
-Uruchonienie serwera Phoenix'a
- 
-W pollutiondb w terminalu cmd:
-mix phx.server
