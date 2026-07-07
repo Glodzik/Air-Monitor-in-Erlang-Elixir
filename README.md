@@ -13,3 +13,5 @@ Przetwarzanie symulowanych danych z czujników powietrza z użyciem jezyków: Er
 - Erlang
 - Elixir, framework Phoenix
 - Livebook
+
+![Aplikacja webowa](web_app/aplikacja.png)
