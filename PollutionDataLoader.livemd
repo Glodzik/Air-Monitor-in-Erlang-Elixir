@@ -1,0 +1,113 @@
+# Untitled notebook
+
+## Section
+
+```elixir
+dataPath = "C:\\Users\\jakub\\Desktop\\Erlang&Elixir\\pollutiondb\\AirlyData-ALL-50k.csv"
+codePath = "C:\\Users\\jakub\\Desktop\\Erlang&Elixir\\pollution_app\\_build\\default\\lib\\pollution_app\\ebin"
+Code.append_path(codePath)
+Application.start(:pollution_app)
+
+defmodule PollutionDataLoader do
+  def load_data(filePath) do
+    filePath
+    |> File.read!
+    |> String.trim()
+    |> String.split("\n")
+    |> Enum.map(&parseline/1)
+  end
+
+  defp parsedate(datetime) do
+    [date, time] = datetime |> String.split("T")
+    [year, month, day] = date |> String.split("-")
+                              |> Enum.map(fn x -> t = Integer.parse(x); elem(t, 0) end)
+    [hour, minute, second] = time |> String.split(":")
+                                  |> Enum.map(fn x -> t = Integer.parse(x); elem(t, 0) end)
+    {{year, month, day}, {hour, minute, second}}
+  end
+  
+  def parseline(line) do
+    [datetime, type, value, id, name, coords] = line |> String.split(";")
+    %{
+      :datetime => parsedate(datetime),
+      :location => coords
+                  |> String.split(",")
+                  |> Enum.map(fn x -> t = Float.parse(x); elem(t, 0) end)
+                  |> List.to_tuple(),
+      :stationId => id
+                  |> Integer.parse()
+                  |> elem(0),
+      :stationName => String.to_charlist(name),
+      :pollutionType => String.to_charlist(type),
+      :pollutionLevel => value
+                        |> Float.parse()
+                        |> elem(0)
+    }
+  end
+
+  def add_stations(data) do
+    data
+    |> Enum.uniq_by(fn x -> x.stationId end)
+    |> Enum.each(fn station -> :pollution_gen_server.add_station(~c"#{station.stationId} #{station.stationName}", station.location) end)
+  end
+
+  def add_measurements(data) do
+    data
+    |> Enum.each(fn station -> :pollution_gen_server.add_value(~c"#{station.stationId} #{station.stationName}", station.datetime, station.pollutionType, station.pollutionLevel) end)
+  end
+end
+```
+
+```elixir
+data = PollutionDataLoader.load_data(dataPath)
+```
+
+```elixir
+IO.puts("Czas ładowania stacji [mikrosekundy]")
+fn ->
+  PollutionDataLoader.add_stations(data) 
+end
+|> :timer.tc() 
+|> elem(0)
+|> IO.puts()
+
+
+IO.puts("\nCzas ładowania pomiarów [mikrosekundy]")
+fn ->
+  PollutionDataLoader.add_measurements(data)
+end
+|> :timer.tc()
+|> elem(0)
+|> IO.puts()
+
+
+IO.puts("\nCzas otrzymania minimum wśród pomiarów danego typu dla stacji [mikrosekundy]")
+fn ->
+  :pollution_gen_server.get_station_min(~c"9910 Polska, Kraków, Studencka", ~c"PM10")
+end
+|> :timer.tc()
+|> elem(0)
+|> IO.puts()
+
+IO.puts("Wynik")
+:pollution_gen_server.get_station_min(~c"9910 Polska, Kraków, Studencka", ~c"PM10")
+|> IO.puts()
+
+
+IO.puts("\nCzas otrzymania średniej pomiarów danego typu w danym dniu [mikrosekundy]")
+fn ->
+  :pollution_gen_server.get_daily_mean(~c"PM25", {2024, 2, 10})
+end
+|> :timer.tc()
+|> elem(0)
+|> IO.puts()
+
+IO.puts("Wynik")
+:pollution_gen_server.get_daily_mean(~c"PM25", {2024, 2, 10})
+|> IO.puts()
+
+```
+
+```elixir
+Application.stop(:pollution_app)
+```
