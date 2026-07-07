@@ -16,4 +16,5 @@ Przetwarzanie symulowanych danych z czujników powietrza z użyciem jezyków: Er
 
 ## Aplikacja webowa
 Aplikacja wyświetlająca symulowane dane w postaci wykresów z możliwością wybrania konkretnej stacji pomiarowej
+
 ![Aplikacja webowa](web_app/aplikacja.png)
