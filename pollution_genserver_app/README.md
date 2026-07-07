@@ -1,9 +1,9 @@
-web_app
+pollution_app
 =====
 
-Aplikacja webowa monitora zanieczyszczeń powietrza
+Aplikacja OTP
 
-Uruchomienie serwera Phoenix'a:
+Uruchomienie
 -----
 
-    $ mix phx.server
+    $ rebar3 compile
