@@ -1,4 +1,4 @@
-pollution_app
+pollution_otp_app
 =====
 
 Aplikacja OTP
