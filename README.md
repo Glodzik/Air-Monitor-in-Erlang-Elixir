@@ -5,7 +5,7 @@ Projekt z przedmiotu **Programowanie w językach Erlang i Elixir** na Wydziale I
 ## Opis
 
 Przetwarzanie symulowanych danych z czujników powietrza z użyciem jezyków: Erlang, Elixir
-- wykorzystanie Erlanga do aplikacji typu GenServer.
+- wykorzystanie Erlanga do aplikacji typu OTP.
 - wykorzystanie Elixira do przetwarzania danych, utworzenia bazy danych i zbudowania aplikacji webowej (z użyciem frameworka Phoenix)
 
 ## Technologie
